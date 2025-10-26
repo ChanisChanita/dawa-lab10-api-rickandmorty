@@ -103,6 +103,27 @@ export class RickAndMortyAPI {
   }
 
   /**
+   * Obtiene un personaje por nombre exacto
+   */
+  static async getCharacterByName(name: string): Promise<Character | null> {
+    try {
+      const response = await fetch(`${BASE_URL}/character/?name=${encodeURIComponent(name)}`, {
+        next: { revalidate: 864000 }
+      });
+      
+      if (!response.ok) {
+        return null;
+      }
+      
+      const data: CharacterResponse = await response.json();
+      return data.results.length > 0 ? data.results[0] : null;
+    } catch (error) {
+      console.error(`Error fetching character by name ${name}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * Obtiene el total de personajes para generateStaticParams
    */
   static async getTotalCharacters(): Promise<number> {
@@ -121,5 +142,56 @@ export class RickAndMortyAPI {
       console.error('Error fetching total characters:', error);
       return 826; // Valor por defecto conocido
     }
+  }
+
+  /**
+   * Obtiene todos los nombres de personajes para rutas estáticas
+   */
+  static async getAllCharacterNames(): Promise<string[]> {
+    try {
+      const names: string[] = [];
+      let page = 1;
+      let hasMore = true;
+
+      while (hasMore) {
+        const response = await fetch(`${BASE_URL}/character?page=${page}`, {
+          cache: 'force-cache'
+        });
+        
+        if (!response.ok) break;
+        
+        const data: CharacterResponse = await response.json();
+        names.push(...data.results.map(char => this.slugify(char.name)));
+        
+        hasMore = !!data.info.next;
+        page++;
+      }
+      
+      return names;
+    } catch (error) {
+      console.error('Error fetching character names:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Convierte un nombre a slug URL-friendly
+   */
+  static slugify(text: string): string {
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Remover caracteres especiales
+      .replace(/[\s_-]+/g, '-') // Reemplazar espacios y guiones con un solo guión
+      .replace(/^-+|-+$/g, ''); // Remover guiones al inicio y final
+  }
+
+  /**
+   * Convierte un slug de vuelta a nombre para búsqueda
+   */
+  static unslugify(slug: string): string {
+    return slug
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 }

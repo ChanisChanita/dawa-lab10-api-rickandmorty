@@ -90,9 +90,20 @@ export function CharacterCard({ character, priority = false }: CharacterCardProp
           </div>
           
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Episodios: {character.episode.length}
-            </p>
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Episodios: {character.episode.length}
+              </p>
+              <div className="flex space-x-1">
+                <Link
+                  href={ROUTES.CHARACTER_BY_NAME(character.name)}
+                  className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 hover:underline"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Por nombre
+                </Link>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

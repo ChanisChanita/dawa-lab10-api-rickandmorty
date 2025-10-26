@@ -21,7 +21,8 @@ export const ROUTES = {
   HOME: '/',
   CHARACTERS: '/characters',
   SEARCH: '/search',
-  CHARACTER_DETAIL: (id: string | number) => `/characters/${id}`
+  CHARACTER_DETAIL: (id: string | number) => `/characters/${id}`,
+  CHARACTER_BY_NAME: (name: string) => `/characters/name/${name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')}`
 } as const;
 
 export const STATUS_COLORS = {

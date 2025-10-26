@@ -10,7 +10,8 @@ export function Navigation() {
   const navItems = [
     { href: ROUTES.HOME, label: 'Inicio' },
     { href: ROUTES.CHARACTERS, label: 'Personajes' },
-    { href: ROUTES.SEARCH, label: 'Búsqueda' }
+    { href: ROUTES.SEARCH, label: 'Búsqueda' },
+    { href: '/examples', label: 'Ejemplos URL' }
   ];
 
   return (
